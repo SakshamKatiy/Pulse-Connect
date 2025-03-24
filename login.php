@@ -11,7 +11,7 @@ if (isset($_POST['save'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
     
-    $email_search = "SELECT * FROM users WHERE email='$email'";
+    $email_search = "SELECT * FROM user WHERE email='$email'";
     $query = mysqli_query($conn,$email_search);
 
     $count = mysqli_num_rows($query);

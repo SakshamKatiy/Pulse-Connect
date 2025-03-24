@@ -1,7 +1,7 @@
 <?php
-session_start(); // Start session to use $_SESSION variables
+session_start(); 
 
-include 'conn.php'; // Include database connection file
+include 'conn.php'; 
 
 if(isset($_POST['submit'])){
     $name = $_POST['name'];
@@ -10,26 +10,29 @@ if(isset($_POST['submit'])){
     $pass = $_POST['password'];
     $cpass = $_POST['cpassword'];
 
-    // Hash passwords
+    
     $hash = password_hash($pass, PASSWORD_BCRYPT);
     $chash = password_hash($cpass, PASSWORD_BCRYPT);
 
-    // Check if email already exists in database
-    $emailquery = "SELECT * FROM users WHERE email='$email'";
-    $query = mysqli_query($conn, $emailquery);
+   $stmt=$conn->prepare("SELECT * FROM user WHERE email=?");
+   $stmt->bind_param('s',$email);
+   $stmt->execute();
+$query=$stmt->get_result();
+    // $emailquery = "SELECT * FROM users WHERE email='$email'";
+    // $query = mysqli_query($conn, $emailquery);
 
     $emailcount = mysqli_num_rows($query);
 
     if($emailcount > 0){
         echo "Email already exists";
     } else {
-        // If passwords match, insert user into database
+       
         if($pass === $cpass){
-            $insertquery = "INSERT INTO users (name, email,role, password, cpassword) VALUES ('$name', '$email','$role', '$hash', '$chash')";
+            $insertquery = "INSERT INTO user (name, email,role, password, cpassword) VALUES ('$name', '$email','$role', '$hash', '$chash')";
             $iquery = mysqli_query($conn, $insertquery);
 
             if($iquery){
-                // Redirect to a success page
+              
                 header("Location: login.php");
                 exit();
             } else {
